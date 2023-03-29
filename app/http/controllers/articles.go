@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"todo/app/http/requests"
+	"todo/app/models"
 	"todo/config/database"
 )
 
@@ -16,6 +17,7 @@ func Store(c *gin.Context) {
 	}
 
 	db := database.Connection()
+
 	insert, err := db.Exec("INSERT INTO articles(title, content) VALUES(?, ?)", article.Title, article.Content)
 	if err != nil {
 		panic(err.Error())
@@ -28,6 +30,10 @@ func Store(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Article created successfully",
-		"id":      id,
+		"data": models.Article{
+			ID:      uint(id),
+			Title:   article.Title,
+			Content: article.Content,
+		},
 	})
 }
