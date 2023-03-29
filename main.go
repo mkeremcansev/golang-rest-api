@@ -8,7 +8,6 @@ import (
 
 func main() {
 	router := gin.Default()
-
 	router.POST("/article/store", articles.Store)
 	router.GET("/article/edit/:id", articles.Edit)
 	err := router.Run()

@@ -20,12 +20,14 @@ func Store(c *gin.Context) {
 
 	insert, err := db.Exec("INSERT INTO articles(title, content) VALUES(?, ?)", article.Title, article.Content)
 	if err != nil {
-		panic(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error occurred while creating article"})
+		return
 	}
 
 	id, err := insert.LastInsertId()
 	if err != nil {
-		panic(err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error occurred while creating article"})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -40,17 +42,15 @@ func Store(c *gin.Context) {
 
 func Edit(c *gin.Context) {
 	id := c.Param("id")
-
 	db := database.Connection()
-
 	var article models.Article
 	err := db.QueryRow("SELECT id, title, content FROM articles WHERE id = ?", id).Scan(&article.ID, &article.Title, &article.Content)
 
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Article not found"})
-	} else {
-		c.JSON(http.StatusOK, gin.H{
-			"data": article,
-		})
+		c.JSON(http.StatusNotFound, gin.H{"message": "Article not found"})
+		return
 	}
+	c.JSON(http.StatusOK, gin.H{
+		"data": article,
+	})
 }
