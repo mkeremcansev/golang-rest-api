@@ -37,3 +37,20 @@ func Store(c *gin.Context) {
 		},
 	})
 }
+
+func Edit(c *gin.Context) {
+	id := c.Param("id")
+
+	db := database.Connection()
+
+	var article models.Article
+	err := db.QueryRow("SELECT id, title, content FROM articles WHERE id = ?", id).Scan(&article.ID, &article.Title, &article.Content)
+
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Article not found"})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"data": article,
+		})
+	}
+}

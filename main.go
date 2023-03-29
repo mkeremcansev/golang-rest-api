@@ -7,9 +7,11 @@ import (
 )
 
 func main() {
-	r := gin.Default()
-	r.POST("/store", articles.Store)
-	err := r.Run()
+	router := gin.Default()
+
+	router.POST("/article/store", articles.Store)
+	router.GET("/article/edit/:id", articles.Edit)
+	err := router.Run()
 	if err != nil {
 		return
 	}
